@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHead,
@@ -23,35 +23,25 @@ const styles = (theme) => ({
   },
 });
 
-const customers = [
-  {
-    id: 1,
-    image: "https://placeimg.com/64/64/1",
-    name: "박서함",
-    birthday: "931028",
-    gender: "남자",
-    job: "배우",
-  },
-  {
-    id: 2,
-    image: "https://placeimg.com/64/64/2",
-    name: "박재찬",
-    birthday: "011206",
-    gender: "남자",
-    job: "아이돌",
-  },
-  {
-    id: 3,
-    image: "https://placeimg.com/64/64/3",
-    name: "최소희",
-    birthday: "000108",
-    gender: "여자",
-    job: "프론트엔드 개발자",
-  },
-];
-
 function App(props) {
   const { classes } = props;
+
+  const [customers, setCustomers] = useState("");
+
+  const callApi = async () => {
+    const response = await fetch("./api/customers");
+    const body = await response.json();
+    return body;
+  };
+
+  useEffect(() => {
+    callApi()
+      .then((res) => {
+        setCustomers(res);
+      })
+      .catch((err) => console.log(err));
+    console.log(customers);
+  }, []);
 
   return (
     <Paper className={classes.root}>
@@ -67,19 +57,22 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((c) => {
-            return (
-              <Customer
-                key={c.id}
-                id={c.id}
-                image={c.image}
-                name={c.name}
-                birthday={c.birthday}
-                gender={c.gender}
-                job={c.job}
-              />
-            );
-          })}
+          {customers
+            ? customers.map((c) => {
+                return (
+                  <Customer
+                    key={c.id}
+                    {...c}
+                    id={c.id}
+                    image={c.image}
+                    name={c.name}
+                    birthday={c.birthday}
+                    gender={c.gender}
+                    job={c.job}
+                  />
+                );
+              })
+            : ""}
         </TableBody>
       </Table>
     </Paper>
