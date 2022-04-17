@@ -1,22 +1,18 @@
 import React from "react";
-
-import CustomerProfile from "./CustomerProfile";
-import CustomerInfo from "./CustomerInfo";
+import { TableRow, TableCell } from "@material-ui/core";
 
 const Customer = (customers) => {
   return (
-    <div>
-      <CustomerProfile
-        id={customers.id}
-        image={customers.image}
-        name={customers.name}
-      />
-      <CustomerInfo
-        birthday={customers.birthday}
-        gender={customers.gender}
-        job={customers.job}
-      />
-    </div>
+    <TableRow>
+      <TableCell>{customers.id}</TableCell>
+      <TableCell>
+        <img src={customers.image} alt="profile" />
+      </TableCell>
+      <TableCell>{customers.name}</TableCell>
+      <TableCell>{customers.birthday}</TableCell>
+      <TableCell>{customers.gender}</TableCell>
+      <TableCell>{customers.job}</TableCell>
+    </TableRow>
   );
 };
 
