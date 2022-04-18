@@ -34,6 +34,7 @@ const styles = (theme) => ({
   paper: {
     marginLeft: 18,
     marginRight: 18,
+    marginBottom: 80,
   },
   progress: {
     margin: theme.spacing * 2,
@@ -98,6 +99,13 @@ const styles = (theme) => ({
 });
 
 function App(props) {
+  const [customers, setCustomers] = useState("");
+  const [completed, setCompleted] = useState(0);
+  const [isLoad, setIsLoad] = useState(false);
+  const [inputs, setInputs] = useState({
+    searchKeyword: "",
+  });
+  const { searchKeyword } = inputs;
   const { classes } = props;
   const cellList = [
     "번호",
@@ -109,13 +117,30 @@ function App(props) {
     "설정",
   ];
 
-  const [customers, setCustomers] = useState("");
-  const [completed, setCompleted] = useState(0);
-  const [isLoad, setIsLoad] = useState(false);
+  const filteredComponents = (data) => {
+    data = data.filter((c) => {
+      return c.name.indexOf(searchKeyword) > -1;
+    });
+    return data.map((c) => {
+      return (
+        <Customer
+          stateRefresh={stateRefresh}
+          key={c.id}
+          id={c.id}
+          image={c.image}
+          name={c.name}
+          birthday={c.birthday}
+          gender={c.gender}
+          job={c.job}
+        />
+      );
+    });
+  };
 
   const stateRefresh = () => {
     setCustomers("");
     setCompleted(0);
+    searchKeyword("");
     callApi()
       .then((res) => {
         setCustomers(res);
@@ -153,6 +178,16 @@ function App(props) {
       .catch((err) => console.log(err));
   }, [isLoad]);
 
+  const handleValueChange = (e) => {
+    const { name, value } = e.target;
+    const nextInputs = {
+      //스프레드 문법으로 기존의 객체를 복사한다.
+      ...inputs,
+      [name]: value,
+    };
+    setInputs(nextInputs);
+  };
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -178,6 +213,9 @@ function App(props) {
             <InputBase
               placeholder="검색하기"
               classes={{ root: classes.inputRoot, input: classes.inputInput }}
+              name="searchKeyword"
+              value={searchKeyword}
+              onChange={handleValueChange}
             />
           </div>
         </Toolbar>
@@ -196,21 +234,7 @@ function App(props) {
           </TableHead>
           <TableBody>
             {customers ? (
-              customers.map((c) => {
-                return (
-                  <Customer
-                    stateRefresh={stateRefresh}
-                    key={c.id}
-                    {...c}
-                    id={c.id}
-                    image={c.image}
-                    name={c.name}
-                    birthday={c.birthday}
-                    gender={c.gender}
-                    job={c.job}
-                  />
-                );
-              })
+              filteredComponents(customers)
             ) : (
               <TableRow>
                 <TableCell colSpan="6" align="center">
