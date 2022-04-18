@@ -35,6 +35,16 @@ function App(props) {
   const [completed, setCompleted] = useState(0);
   const [isLoad, setIsLoad] = useState(false);
 
+  const stateRefresh = () => {
+    setCustomers("");
+    setCompleted(0);
+    callApi()
+      .then((res) => {
+        setCustomers(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const callApi = async () => {
     const response = await fetch("./api/customers");
     const body = await response.json();
@@ -64,6 +74,20 @@ function App(props) {
       })
       .catch((err) => console.log(err));
   }, [isLoad]);
+
+  // const progress = () => {
+  //   setCompleted(completed >= 100 ? 0 : completed + 1);
+  // };
+
+  // useEffect(() => {
+  //   var timer = setInterval(progress(), 20);
+  //   callApi()
+  //     .then((res) => {
+  //       setCustomers(res);
+  //     })
+  //     .catch((err) => console.log(err));
+  //   return clearInterval(timer);
+  // }, [completed]);
 
   return (
     <div>
@@ -109,7 +133,7 @@ function App(props) {
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd />
+      <CustomerAdd stateRefresh={stateRefresh} />
     </div>
   );
 }

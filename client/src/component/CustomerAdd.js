@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { post } from "axios";
 
-function CustomerAdd() {
+function CustomerAdd(props) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [inputs, setInputs] = useState({
@@ -16,12 +16,11 @@ function CustomerAdd() {
     e.preventDefault(); // 데이터가 서버로 전달됨으로써 오류가 발생하지 않도록 함
     addCustomer().then((response) => {
       console.log(response.data);
+      props.stateRefresh();
     });
-    console.log(file);
     setFile(null);
     setFileName("");
     setInputs({ username: "", birthday: "", gender: "", job: "" });
-    window.location.reload();
   };
 
   const addCustomer = () => {
