@@ -7,6 +7,7 @@ import {
   TableCell,
   Paper,
   withStyles,
+  CircularProgress,
 } from "@material-ui/core";
 
 import "./App.css";
@@ -21,12 +22,17 @@ const styles = (theme) => ({
   table: {
     minWidth: 1080,
   },
+  progress: {
+    margin: theme.spacing * 2,
+  },
 });
 
 function App(props) {
   const { classes } = props;
 
   const [customers, setCustomers] = useState("");
+  const [completed, setCompleted] = useState(0);
+  const [isLoad, setIsLoad] = useState(false);
 
   const callApi = async () => {
     const response = await fetch("./api/customers");
@@ -34,14 +40,30 @@ function App(props) {
     return body;
   };
 
+  const progress = () => {
+    let complete = 0;
+    let timer = setInterval(() => {
+      if (complete >= 100) {
+        complete = 0;
+      } else {
+        complete += 1;
+      }
+      setCompleted(complete);
+      if (isLoad) {
+        clearInterval(timer);
+      }
+    }, 20);
+  };
+
   useEffect(() => {
+    progress();
     callApi()
       .then((res) => {
         setCustomers(res);
+        console.log(customers);
       })
       .catch((err) => console.log(err));
-    console.log(customers);
-  }, []);
+  }, [isLoad]);
 
   return (
     <Paper className={classes.root}>
@@ -57,22 +79,32 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers
-            ? customers.map((c) => {
-                return (
-                  <Customer
-                    key={c.id}
-                    {...c}
-                    id={c.id}
-                    image={c.image}
-                    name={c.name}
-                    birthday={c.birthday}
-                    gender={c.gender}
-                    job={c.job}
-                  />
-                );
-              })
-            : ""}
+          {customers ? (
+            customers.map((c) => {
+              return (
+                <Customer
+                  key={c.id}
+                  {...c}
+                  id={c.id}
+                  image={c.image}
+                  name={c.name}
+                  birthday={c.birthday}
+                  gender={c.gender}
+                  job={c.job}
+                />
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan="6" align="center">
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={completed}
+                />
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </Paper>
