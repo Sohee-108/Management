@@ -75,20 +75,6 @@ function App(props) {
       .catch((err) => console.log(err));
   }, [isLoad]);
 
-  // const progress = () => {
-  //   setCompleted(completed >= 100 ? 0 : completed + 1);
-  // };
-
-  // useEffect(() => {
-  //   var timer = setInterval(progress(), 20);
-  //   callApi()
-  //     .then((res) => {
-  //       setCustomers(res);
-  //     })
-  //     .catch((err) => console.log(err));
-  //   return clearInterval(timer);
-  // }, [completed]);
-
   return (
     <div>
       <Paper className={classes.root}>
@@ -101,6 +87,7 @@ function App(props) {
               <TableCell>생년월일</TableCell>
               <TableCell>성별</TableCell>
               <TableCell>직업</TableCell>
+              <TableCell>설정</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -108,6 +95,7 @@ function App(props) {
               customers.map((c) => {
                 return (
                   <Customer
+                    stateRefresh={stateRefresh}
                     key={c.id}
                     {...c}
                     id={c.id}
