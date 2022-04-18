@@ -1,7 +1,7 @@
 import React from "react";
 import { TableRow, TableCell } from "@material-ui/core";
 
-const Customer = (customers) => {
+function Customer(customers) {
   return (
     <TableRow>
       <TableCell>{customers.id}</TableCell>
@@ -14,6 +14,6 @@ const Customer = (customers) => {
       <TableCell>{customers.job}</TableCell>
     </TableRow>
   );
-};
+}
 
 export default Customer;
